@@ -4,6 +4,10 @@ export function fetchActiveProducts() {
     return prisma.product.findMany({where: { isActive: true } })
 }
 
+export function getProductById(id: number) {
+    return prisma.product.findUnique({ where: {id: id} })
+}
+
 export function createNewProduct(name: string, price: number, description: string) {
     return prisma.product.create({
         data: {

@@ -12,13 +12,24 @@ export async function getProducts(req: Request, res: Response) {
     }
 }
 
+export async function getSpecificProduct(req: Request, res: Response) {
+    try {
+        const id = req.params.id
+        if(!id) return res.status(400).json({ message: "Id not provided" })
+        const product = await productService.getProductById(Number(id))
+        return res.status(200).json(product)
+    } catch (err) {
+        console.error(err)
+        return res.status(500).json({ message: "Internal server error" })
+    }
+}
+
 export async function createProduct(req: Request, res: Response) {
     try {
         const { name, description, price } = req.body
         if(!name || !price) {
             return res.status(400).json({ message: "Not enough data" })
         }
-        console.log(name)
         const product = await productService.createNewProduct(name, Number(price), description)
         return res.status(201).json(product)
     } catch (err) {
