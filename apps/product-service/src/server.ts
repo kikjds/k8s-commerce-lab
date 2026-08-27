@@ -9,7 +9,7 @@ var corsOptions = {
 
 const app = express()
 app.use(cors(corsOptions))
-app.use(express.json(), express.urlencoded({ extended: false }))
+app.use(express.json(), express.urlencoded({ extended: true }))
 app.use('/api', productRoutes)
 
 app.get('/', (req: Request, res: Response) => {

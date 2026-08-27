@@ -27,10 +27,14 @@ export async function getSpecificProduct(req: Request, res: Response) {
 export async function createProduct(req: Request, res: Response) {
     try {
         const { name, description, price } = req.body
+        const file = req.file
         if(!name || !price) {
             return res.status(400).json({ message: "Not enough data" })
         }
-        const product = await productService.createNewProduct(name, Number(price), description)
+        if(!file) return res.status(400).json({ message: "Image not provided" })
+
+        console.log(name)
+        const product = await productService.createNewProduct(name, Number(price), description, file)
         return res.status(201).json(product)
     } catch (err) {
         console.error(err)
