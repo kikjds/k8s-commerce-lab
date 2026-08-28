@@ -1,6 +1,7 @@
 import prisma from "../lib/db.js";
 import s3Client from "../lib/s3.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+import crypto from "node:crypto"
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -16,9 +17,28 @@ export function getProductById(id: number) {
 
 export async function createNewProduct(name: string, price: number, description: string, file: Express.Multer.File) {
 
+
+    const product = await prisma.product.create({
+        data: {
+            name: name,
+            price: price,
+            description: description ? description : null,
+        },
+        select: {
+            id: true,
+            name: true,
+            price: true,
+            description: true,
+        }
+    })
+
+
+    
+    const imageName = `products/${crypto.randomBytes(16).toString('hex')}-${file.originalname}`
+
     const params = {
         Bucket: bucketName,
-        Key: `${file.originalname}`,
+        Key: imageName,
         Body: file.buffer,
         ContentType: file.mimetype
     }
@@ -27,15 +47,17 @@ export async function createNewProduct(name: string, price: number, description:
 
     await s3Client.send(command)
 
-    const product = prisma.product.create({
+    const image = await prisma.productImage.create({
         data: {
-            name: name,
-            price: price,
-            description: description ? description : null
+            productId: product.id,
+            url: imageName
         }
     })
-
-    return product
+    
+    return {
+        ...product,
+        images: [ image ]
+    }
 }
 
 export function updateProductBasedOnId(id: number, name: string, price: number, description: string ) {
