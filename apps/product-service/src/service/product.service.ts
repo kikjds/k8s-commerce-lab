@@ -8,7 +8,7 @@ dotenv.config()
 const bucketName = process.env.BUCKET_NAME || "bucket_name"
 
 export function fetchActiveProducts() {
-    return prisma.product.findMany({where: { isActive: true }, select: { name: true, price: true, description: true } })
+    return prisma.product.findMany({where: { isActive: true }, select: { id: true, name: true, price: true, description: true, images: { select: { id: true, url: true } } } })
 }
 
 export function getProductById(id: number) {
