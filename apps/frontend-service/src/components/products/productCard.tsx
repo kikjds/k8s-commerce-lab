@@ -9,7 +9,7 @@ export interface Product {
     }[]
 }
 
-function ProductCard({product}: {product: Product}) {
+function ProductCard({ product, onDelete }: { product: Product, onDelete: (id: number) => void }) {
     const image = product.images[0]
     const bucket = import.meta.env.VITE_S3_BUCKET
     const region = import.meta.env.VITE_S3_REGION
@@ -25,6 +25,7 @@ function ProductCard({product}: {product: Product}) {
             <h2 className="text-xl font-bold">{product.name}</h2>
             {product.description && <p className="mt-2 text-gray-600">{product.description}</p>}
             <p className="mt-4 text-lg font-semibold text-green-700">{product.price} PLN</p>
+            <button type="button" onClick={() => onDelete(product.id)} className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition-colors">Delete</button>
         </article>
     )
 }
