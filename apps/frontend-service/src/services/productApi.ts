@@ -1,8 +1,10 @@
 import type { Product } from "../components/products/productCard"
 
+const PRODUCT_API_URL = import.meta.env.VITE_PRODUCT_API_URL
+
 export async function getProducts() {
     try {
-        const response = await fetch("http://localhost:3000/api/products")
+        const response = await fetch(`${PRODUCT_API_URL}/api/products`)
         const data: Product[] = await response.json()
         return data
     } catch (err) {
@@ -12,11 +14,11 @@ export async function getProducts() {
 
 export async function createProduct(product: FormData): Promise<Product | undefined> {
     try {
-        const respone = await fetch("http://localhost:3000/api/products", {
+        const response = await fetch(`${PRODUCT_API_URL}/api/products`, {
             method: "post",
             body: product
         })
-        const data = await respone.json()
+        const data = await response.json()
         return data
     } catch (err) {
         console.error(err)
@@ -25,7 +27,7 @@ export async function createProduct(product: FormData): Promise<Product | undefi
 
 export async function deleteProduct(id: number) {
     try {
-        const response = await fetch(`http://localhost:3000/api/products/${id}`, { method: "delete" })
+        const response = await fetch(`${PRODUCT_API_URL}/api/products/${id}`, { method: "delete" })
 
         if (!response.ok) {
             throw new Error("Could not delete product")
