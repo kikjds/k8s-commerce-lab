@@ -26,15 +26,14 @@ export async function getSpecificProduct(req: Request, res: Response) {
 
 export async function createProduct(req: Request, res: Response) {
     try {
-        const { name, description, price } = req.body
+        const { name, description, price, quantity } = req.body
         const file = req.file
         if(!name || !price) {
             return res.status(400).json({ message: "Not enough data" })
         }
         if(!file) return res.status(400).json({ message: "Image not provided" })
 
-        console.log(name)
-        const product = await productService.createNewProduct(name, Number(price), description, file)
+        const product = await productService.createNewProduct(name, Number(price), description, Number(quantity), file)
         return res.status(201).json(product)
     } catch (err) {
         console.error(err)
@@ -46,11 +45,11 @@ export async function updateProduct(req:Request, res: Response) {
     try {
         const id = req.params.id
         if(!id) return res.status(400).json({ message: "Id not provided" })
-        const { name, description, price } = req.body
+        const { name, description, price, quantity } = req.body
         if(!name || !price) {
             return res.status(400).json({ message: "Not enough data" })
         }
-        await productService.updateProductBasedOnId(Number(id), name, Number(price), description)
+        await productService.updateProductBasedOnId(Number(id), name, Number(price), description, Number(quantity))
         return res.sendStatus(204)
     } catch (err) {
         console.error(err)

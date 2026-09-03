@@ -15,7 +15,7 @@ export function getProductById(id: number) {
     return prisma.product.findUnique({ where: {id: id} })
 }
 
-export async function createNewProduct(name: string, price: number, description: string, file: Express.Multer.File) {
+export async function createNewProduct(name: string, price: number, description: string, quantity: number, file: Express.Multer.File) {
 
 
     const product = await prisma.product.create({
@@ -23,6 +23,7 @@ export async function createNewProduct(name: string, price: number, description:
             name: name,
             price: price,
             description: description ? description : null,
+            quantity: quantity
         },
         select: {
             id: true,
@@ -60,11 +61,12 @@ export async function createNewProduct(name: string, price: number, description:
     }
 }
 
-export function updateProductBasedOnId(id: number, name: string, price: number, description: string ) {
+export function updateProductBasedOnId(id: number, name: string, price: number, description: string, quantity: number ) {
     return prisma.product.update({where: {id: id}, data: {
         name: name,
         price: price,
-        description: description ? description : null
+        description: description ? description : null,
+        quantity: quantity
     }})
 }
 
