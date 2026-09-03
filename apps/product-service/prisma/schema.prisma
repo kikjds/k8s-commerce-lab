@@ -12,6 +12,7 @@ model Product {
   name        String
   description String?
   price       Float
+  quantity    Int
   images      ProductImage[]
   isActive    Boolean @default(true)
   createdAt   DateTime @default(now())
