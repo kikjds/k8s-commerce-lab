@@ -4,6 +4,7 @@ import type { Product } from "./productCard"
 export interface newProduct {
     name: string,
     price: number,
+    quantity: number,
     description?: string,
     image: File
 }
@@ -33,6 +34,10 @@ function ProductForm({ onProductCreated }: ProductFormProps) {
             <label className="grid gap-1 text-sm font-medium">
                 Price
             <input id="price" className="rounded border border-gray-300 px-3 py-2" type="number" min={0.1} max={400} step={0.1} name="price" required />
+            </label>
+            <label className="grid gap-1 text-sm font-medium">
+                Quantity
+            <input className="rounded border border-gray-300 px-3 py-2" type="number" min={1} step={1} name="quantity" required />
             </label>
             <label className="grid gap-1 text-sm font-medium">
                 Image
