@@ -3,7 +3,7 @@ import cors from "cors"
 import productRoutes from "./route/product.route.js"
 
 var corsOptions = {
-    origin: process.env.FRONTEND_SERVICE_URL || "http://localhost:4000",
+    origin: process.env.FRONTEND_SERVICE_URL || "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"]
 }
 

@@ -1,0 +1,86 @@
+name: k8s-demo-app
+
+services:
+  product-service:
+    container_name: product-service
+    build:
+      context: ../../apps/product-service
+      dockerfile: Dockerfile
+    env_file:
+      - ../../apps/product-service/.env
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app_network
+    ports:
+      - "3000:3000"
+
+  order-service:
+    container_name: order-service
+    build:
+      context: ../../apps/orders-service
+      dockerfile: Dockerfile
+    env_file:
+      - ../../apps/orders-service/.env
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app_network
+    ports:
+      - "3001:3001"
+
+  frontend-service:
+    container_name: frontend-service
+    build:
+      context: ../../apps/frontend-service
+      dockerfile: Dockerfile
+    depends_on:
+      - order-service
+      - product-service
+    env_file:
+      - ../../apps/frontend-service/.env
+    networks:
+      - app_network
+    ports:
+      - "2000:80"
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    networks:
+      - app_network
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - mariadb:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 4s
+      retries: 5
+      start_period: 30s
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  mariadb:
