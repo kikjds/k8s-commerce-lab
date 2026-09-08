@@ -1,4 +1,4 @@
-import express, {Request, Response} from "express";
+import express from "express";
 import cors from "cors"
 import productRoutes from "./route/product.route.js"
 
@@ -12,8 +12,6 @@ app.use(cors(corsOptions))
 app.use(express.json(), express.urlencoded({ extended: true }))
 app.use('/api', productRoutes)
 
-app.get('/', (req: Request, res: Response) => {
-    res.send("Hello world")
-})
+
 
 export default app 
