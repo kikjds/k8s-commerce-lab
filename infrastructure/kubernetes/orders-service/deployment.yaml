@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orders-service
+  template:
+    metadata:
+      labels:
+        app: orders-service
+    spec:
+      containers:
+      - name: orders-service
+        image: krzysztofjds/orders-service:latest
+        env:
+        - name: DATABASE_URL
+          value: mysql://root:root@mariadb:3306/Order
+        - name: DB_HOST
+          value: mariadb
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          value: root
+        - name: DB_DATABASE
+          value: Order
+        - name: REDIS_URL
+          value: redis://redis-service:6379
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3001
