@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+      - name: product-service
+        image: krzysztofjds/product-service:latest
+        env:
+        - name: DATABASE_URL
+          value: mysql://root:root@mariadb:3306/Product
+        - name: DB_HOST
+          value: mariadb
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          value: root
+        - name: DB_DATABASE
+          value: Product
+        - name: REDIS_URL
+          value: redis://redis-service:6379
+        - name: BUCKET_NAME
+          value: k8s-demo-test
+        - name: BUCKET_REGION
+          value: eu-north-1
+        - name: AWS_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: product-s3-credentials
+              key: AWS_ACCESS_KEY
+        - name: AWS_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: product-s3-credentials
+              key: AWS_SECRET_KEY
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 3000
