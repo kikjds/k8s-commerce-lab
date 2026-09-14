@@ -65,3 +65,6 @@ jobs:
           context: apps/${{ matrix.directory }}
           push: true
           tags: ${{vars.DOCKER_USERNAME}}/${{ matrix.directory }}:latest
+          build-args: |
+            VITE_S3_BUCKET=${{ vars.VITE_S3_BUCKET }}
+            VITE_S3_REGION=${{ vars.VITE_S3_REGION }}
