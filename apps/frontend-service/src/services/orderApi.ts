@@ -1,4 +1,4 @@
-const ORDER_API_URL = import.meta.env.VITE_ORDER_API_URL
+const ORDER_API_URL = `${import.meta.env.VITE_ORDER_API_URL ?? ""}/api/orders`
 
 export interface Order {
     id: number
@@ -18,7 +18,7 @@ export interface NewOrder {
 
 export async function getOrders() {
     try {
-        const response = await fetch(`${ORDER_API_URL}/api/orders`)
+        const response = await fetch(ORDER_API_URL)
         const data: Order[] = await response.json()
         return data
     } catch (err) {
@@ -28,7 +28,7 @@ export async function getOrders() {
 
 export async function createOrder(order: NewOrder): Promise<Order | undefined> {
     try {
-        const response = await fetch(`${ORDER_API_URL}/api/orders`, {
+        const response = await fetch(ORDER_API_URL, {
             method: "post",
             headers: {
                 "Content-Type": "application/json"
