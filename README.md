@@ -32,5 +32,14 @@ apps/
 infrastructure/
 	docker/
 	kubernetes/
+	terraform/
 ```
 
+## Infrastructure
+
+- `infrastructure/docker/docker-compose.yaml` runs the application and its
+  MariaDB and Redis dependencies locally with Docker Compose.
+- `infrastructure/kubernetes` contains Kubernetes manifests for the frontend,
+  backend services, MariaDB, and Redis.
+- `infrastructure/terraform/s3` contains Terraform configuration for the S3
+  bucket that stores product images.
