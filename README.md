@@ -41,5 +41,5 @@ infrastructure/
   MariaDB and Redis dependencies locally with Docker Compose.
 - `infrastructure/kubernetes` contains Kubernetes manifests for the frontend,
   backend services, MariaDB, and Redis.
-- `infrastructure/terraform/s3` contains Terraform configuration for the S3
-  bucket that stores product images.
+- `infrastructure/terraform` provisions a private S3 bucket for product images
+  and a CloudFront distribution that is its only public read path.
