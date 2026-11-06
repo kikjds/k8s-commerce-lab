@@ -1,4 +1,4 @@
-name: Test
+name: Detect-Test-Push
 on:
   push:
     branches:
@@ -6,17 +6,34 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
+  detect-change:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.changes.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: changes
+        with:
+          filters: |
+            frontend-service:
+              - 'apps/frontend-service/**'
+            orders-service:
+              - 'apps/orders-service/**'
+            product-service:
+              - 'apps/product-service/**'
+
   test-project:
-    name: Test ${{ matrix.directory }}
+    needs: detect-change
+    if: needs.detect-change.outputs.services != '[]'
+    name: Test ${{ matrix.service }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory: 
-          - frontend-service
-          - product-service
-          - orders-service
+        service: ${{ fromJSON(needs.detect-change.outputs.services) }}
     steps:
       - name: clone repository
         uses: actions/checkout@v7
@@ -25,27 +42,24 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-          cache-dependency-path: apps/${{matrix.directory}}/package-lock.json
+          cache-dependency-path: apps/${{matrix.service}}/package-lock.json
           
       - name: Install dependencies
-        working-directory: apps/${{ matrix.directory }}
+        working-directory: apps/${{ matrix.service }}
         run: npm ci
 
       - name: Run tests
-        working-directory: apps/${{ matrix.directory }}
+        working-directory: apps/${{ matrix.service }}
         run: npm run test
   
   push-images:
-    if: github.event_name == 'push'
-    name: Build and push ${{matrix.directory}}
-    needs: test-project
+    needs: [detect-change, test-project]
+    if: github.event_name == 'push' && needs.detect-change.outputs.services != '[]'
+    name: Build and push ${{matrix.service}}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory:
-         - frontend-service
-         - orders-service
-         - product-service
+        service: ${{ fromJSON(needs.detect-change.outputs.services) }}
     steps:
       - name: clone repositories
         uses: actions/checkout@v7
@@ -62,9 +76,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          context: apps/${{ matrix.directory }}
+          context: apps/${{ matrix.service }}
           push: true
-          tags: ${{vars.DOCKER_USERNAME}}/${{ matrix.directory }}:latest
+          tags: ${{vars.DOCKER_USERNAME}}/${{ matrix.service }}:latest
           build-args: |
             VITE_S3_BUCKET=${{ vars.VITE_S3_BUCKET }}
             VITE_S3_REGION=${{ vars.VITE_S3_REGION }}
