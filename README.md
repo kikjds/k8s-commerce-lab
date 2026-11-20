@@ -1,8 +1,7 @@
 # k8s-commerce-lab
 
-A microservices-based e-commerce demo. The project is intended for learning
-Docker, Kubernetes, Terraform, and asynchronous communication with Redis
-Streams.
+A microservices-based e-commerce demo showcasing Docker, Kubernetes,
+Terraform, and asynchronous communication with Redis Streams.
 
 ## Services
 
