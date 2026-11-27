@@ -82,7 +82,9 @@ jobs:
         with:
           context: apps/${{ matrix.service }}
           push: true
-          tags: ${{vars.DOCKER_USERNAME}}/${{ matrix.service }}:latest
+          tags: |
+            ${{vars.DOCKER_USERNAME}}/${{ matrix.service }}:latest
+            ${{vars.DOCKER_USERNAME}}/${{ matrix.service }}:${{ github.sha }}
           build-args: |
             VITE_S3_BUCKET=${{ vars.VITE_S3_BUCKET }}
             VITE_S3_REGION=${{ vars.VITE_S3_REGION }}
